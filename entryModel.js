@@ -1,12 +1,12 @@
-const sql = require("../config/db.config.js");
+const sql = require("./db.config.js");
 
 const Entry = function (entry) {
-  this.UserID = entry.UserID;
+  this.userID = entry.userID;
   this.Username = entry.Username;
-  this.Create_date = new Date();
+  this.Date = new Date();
 };
 
-Task.getEnteries = (userID, result) => {
+Entry.getEnteries = (userID, result) => {
   sql.query(`SELECT * FROM Entries WHERE userID = ?`, [userID], (err, res) => {
     if (err) {
       console.log("error: ", err);
@@ -17,3 +17,18 @@ Task.getEnteries = (userID, result) => {
     result(null, res);
   });
 };
+
+Entry.postEntry = (newEntry, result) => {
+  sql.query("INSERT INTO history SET ?", newEntry, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("created entry ", { ID: res.insertId, ...newEntry });
+    result(null, { ID: res.insertId, ...newEntry });
+  });
+};
+
+module.exports = Entry;
